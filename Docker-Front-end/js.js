@@ -1,13 +1,35 @@
 var editor; // use a global for the submit and return data rendering in the examples
 
+$.fn.dataTable.render.moment = function (from, to, locale) {
+  // Argument shifting
+  if (arguments.length === 1) {
+    locale = 'en';
+    to = from;
+    from = 'YYYY-MM-DD';
+  }
+  else if (arguments.length === 2) {
+    locale = 'en';
+  }
+
+  return function (d, type, row) {
+    if (!d) {
+      return type === 'sort' || type === 'type' ? 0 : d;
+    }
+
+    var m = window.moment(d, from, locale, true);
+
+    // Order and type get a number value from Moment, everything else
+    // sees the rendered value
+    return m.format(type === 'sort' || type === 'type' ? 'x' : to);
+  };
+};
+
 $(document).ready(function () {
   editor = new $.fn.dataTable.Editor({
     ajax: "../index.php",
     table: "#example",
-    fields: [{
-      label: "Id:",
-      name: "users.Id"
-    }, {
+    fields: [
+    {
       label: "First name:",
       name: "users.firstName"
     }, {
@@ -15,21 +37,34 @@ $(document).ready(function () {
       name: "users.lastName"
     }, {
       label: "Gender:",
-      name: "users.gender"
+      name: "users.gender",
+      type:"select",
+      options: [
+        "M",
+        "F"
+    ]
     }, {
       label: "Hire date:",
       name: "users.hireDate",
-      type: "select"
+      type: 'datetime',
+      displayFormat: 'YYYY-MM-DD',
+      wireFormat: 'YYYY-MM-DD',
+      keyInput: false
     }, {
       label: "Birth date:",
       name: "users.birthDate",
-      type: "select"
+      type: "datetime",
+      displayFormat: 'YYYY-MM-DD',
+      wireFormat: 'YYYY-MM-DD',
+      keyInput: false
     }, {
       name: "users.removed_date",
       type: "hidden"
     }
     ]
   });
+
+  
 
   var table = $('#example').DataTable({
     dom: "Bfrtip",
@@ -38,7 +73,7 @@ $(document).ready(function () {
       type: 'POST'
     },
     columns: [
-      { data: "id" },
+      { data: "DT_RowId" },
       { data: "firstName" },
       { data: "lastName" },
       { data: "gender" },
@@ -48,7 +83,7 @@ $(document).ready(function () {
     select: true,
     buttons: [
       { extend: "create", editor: editor },
-      { extend: "edit", editor: editor },
+      { extend: "edit", editor: editor},
       {
         extend: "selected",
         text: 'Delete',

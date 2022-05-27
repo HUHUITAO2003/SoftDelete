@@ -13,6 +13,26 @@ class MySQL
     $this->index = $index;
   }
 
+  function get($table)
+  {
+    $query = "SELECT id, first_name, last_name, gender, hire_date, birth_date FROM employees limit 50;";
+
+    $result = $this->connessione->query($query)
+      or die('Query fallita ' . mysqli_error($this->connessione) . '' . mysqli_errno($this->connessione));
+    while ($row = $result->fetch_assoc()) {
+      array_push($table['data'], array(
+        "DT_RowId" => $row['id'],
+        "birthDate" => $row['birth_date'],
+        "firstName" => $row['first_name'],
+        "lastName" => $row['last_name'],
+        "gender" => $row['gender'],
+        "hireDate" => $row['hire_date']
+      ));
+    }
+    return $table;
+  }
+
+  /*
   function get($start, $length, $search, $ordercol, $order)
   {
     $ordercol++;
@@ -31,7 +51,7 @@ class MySQL
                   'links_' =>array( 'self'=>array('href'=>$this->index."?id=".$row['id']), 
                               'employee'=>array('href'=>$this->index."?id=".$row['id']))
                 )); 
-    }*/
+    }*//*
     $table = array("data" => array());
     $query = "SELECT id, first_name, last_name, gender, hire_date, birth_date FROM employees {$where} ORDER BY {$ordercol} {$order} LIMIT {$start} , {$length}";
 
@@ -56,7 +76,7 @@ class MySQL
     }
 
     return $table;
-  }
+  }*/
 
 
   function getID($id)
@@ -90,7 +110,7 @@ class MySQL
 
   function post($data)
   {
-    $query = "INSERT INTO employees(birth_date, first_name, gender, hire_date, last_name) VALUES ('{$data->birthDate}','{$data->firstName}','{$data->gender}','{$data->hireDate}','{$data->lastName}');";
+    $query = "INSERT INTO employees(birth_date, first_name, gender, hire_date, last_name) VALUES ('{$data["birthDate"]}','{$data["firstName"]}','{$data["gender"]}','{$data["hireDate"]}','{$data["lastName"]}');";
     $result = $this->connessione->query($query)
       or die('Query fallita ' . mysqli_error($this->connessione) . '' . mysqli_errno($this->connessione));
   }
@@ -105,12 +125,12 @@ class MySQL
   function put($data)
   {
     $query = "UPDATE employees 
-    SET birth_date = '{$data->birthDate}',
-    first_name = '{$data->firstName}',
-    gender = '{$data->gender}',
-    hire_date = '{$data->hireDate}',
-    last_name = '{$data->lastName}' 
-    WHERE id = '{$data->id}';";
+    SET birth_date = '{$data["birthDate"]}',
+    first_name = '{$data["firstName"]}',
+    gender = '{$data["gender"]}',
+    hire_date = '{$data["hireDate"]}',
+    last_name = '{$data["lastName"]}' 
+    WHERE id = '{$data["id"]}';";
     $result = $this->connessione->query($query)
       or die('Query fallita ' . mysqli_error($this->connessione) . '' . mysqli_errno($this->connessione));
   }
