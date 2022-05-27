@@ -6,7 +6,7 @@ $sql = new MySQL($index);
 
 $method = $_SERVER['REQUEST_METHOD'];
 $table = array("data" => array());
-
+$h = true;
 switch ($method) {
   case 'PUT':
     $data = getData();
@@ -41,6 +41,7 @@ switch ($method) {
       case 'edit':
         $data['id'] = array_keys($_POST['data'])[0];
         if ($_POST['data'][$data['id']]['users']['removed_date']!="") {
+          $h=false;
           $sql->delete($data['id']);
         } else {
 
@@ -53,7 +54,9 @@ switch ($method) {
         };
 
       default:
+      if($h==true){
         $table = $sql->get($table/*$start,$length,$search,$ordercol, $order*/);
+      }
           //$table['recordsTotal'] = $sql->count();
         ;
     }

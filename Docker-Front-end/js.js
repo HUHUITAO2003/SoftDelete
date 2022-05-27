@@ -83,7 +83,11 @@ $(document).ready(function () {
     select: true,
     buttons: [
       { extend: "create", editor: editor },
-      { extend: "edit", editor: editor},
+      { extend: "edit", editor: editor,
+      action: function () {
+        editor.edit(table.rows( { selected: true } ).indexes(),{ buttons: 'Update'});
+
+    } }, 
       {
         extend: "selected",
         text: 'Delete',
