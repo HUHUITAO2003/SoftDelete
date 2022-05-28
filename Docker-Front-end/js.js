@@ -1,43 +1,19 @@
-var editor; // use a global for the submit and return data rendering in the examples
-
-$.fn.dataTable.render.moment = function (from, to, locale) {
-  // Argument shifting
-  if (arguments.length === 1) {
-    locale = 'en';
-    to = from;
-    from = 'YYYY-MM-DD';
-  }
-  else if (arguments.length === 2) {
-    locale = 'en';
-  }
-
-  return function (d, type, row) {
-    if (!d) {
-      return type === 'sort' || type === 'type' ? 0 : d;
-    }
-
-    var m = window.moment(d, from, locale, true);
-
-    // Order and type get a number value from Moment, everything else
-    // sees the rendered value
-    return m.format(type === 'sort' || type === 'type' ? 'x' : to);
-  };
-};
-
+var editor;
 $(document).ready(function () {
+
   editor = new $.fn.dataTable.Editor({
     ajax: "../index.php",
     table: "#example",
-    fields: [
+    fields: [ //parametri form
     {
       label: "First name:",
-      name: "users.firstName"
+      name: "firstName"
     }, {
       label: "Last name:",
-      name: "users.lastName"
+      name: "lastName"
     }, {
       label: "Gender:",
-      name: "users.gender",
+      name: "gender",
       type:"select",
       options: [
         "M",
@@ -45,14 +21,14 @@ $(document).ready(function () {
     ]
     }, {
       label: "Hire date:",
-      name: "users.hireDate",
+      name: "hireDate",
       type: 'datetime',
       displayFormat: 'YYYY-MM-DD',
       wireFormat: 'YYYY-MM-DD',
       keyInput: false
     }, {
       label: "Birth date:",
-      name: "users.birthDate",
+      name: "birthDate",
       type: "datetime",
       displayFormat: 'YYYY-MM-DD',
       wireFormat: 'YYYY-MM-DD',
@@ -64,10 +40,10 @@ $(document).ready(function () {
     ]
   });
 
-  
-
   var table = $('#example').DataTable({
     dom: "Bfrtip",
+    "processing": true,
+    "serverSide": true,
     ajax: {
       url: "../index.php",
       type: 'POST'
@@ -83,11 +59,7 @@ $(document).ready(function () {
     select: true,
     buttons: [
       { extend: "create", editor: editor },
-      { extend: "edit", editor: editor,
-      action: function () {
-        editor.edit(table.rows( { selected: true } ).indexes(),{ buttons: 'Update'});
-
-    } }, 
+      { extend: "edit", editor: editor},
       {
         extend: "selected",
         text: 'Delete',

@@ -4,7 +4,6 @@ require "Connessione.php";
 class MySQL
 {
   private $connessione;
-  private $index;
 
   function __construct($index)
   {
@@ -12,46 +11,15 @@ class MySQL
     $this->connessione = $sql->connect();
     $this->index = $index;
   }
-
-  function get($table)
-  {
-    $query = "SELECT id, first_name, last_name, gender, hire_date, birth_date FROM employees limit 50;";
-
-    $result = $this->connessione->query($query)
-      or die('Query fallita ' . mysqli_error($this->connessione) . '' . mysqli_errno($this->connessione));
-    while ($row = $result->fetch_assoc()) {
-      array_push($table['data'], array(
-        "DT_RowId" => $row['id'],
-        "birthDate" => $row['birth_date'],
-        "firstName" => $row['first_name'],
-        "lastName" => $row['last_name'],
-        "gender" => $row['gender'],
-        "hireDate" => $row['hire_date']
-      ));
-    }
-    return $table;
-  }
-
-  /*
-  function get($start, $length, $search, $ordercol, $order)
+  
+  function get($table, $start, $length, $search, $ordercol, $order)
   {
     $ordercol++;
     $where = null;
     if(!is_null($search)){
       $where = "WHERE id LIKE '%{$search}%' OR birth_date LIKE '%{$search}%'OR first_name LIKE '%{$search}%' OR last_name LIKE '%{$search}%' OR gender LIKE '%{$search}%' OR hire_date LIKE '%{$search}%'";
     }
-    /*
-    $employees=array();
-    $query = 'select * from employees limit '.$page*$size.','.$size;
-    $result = $this->connessione->query($query)
-    or die('Query fallita ' . mysqli_error($this->connessione) . '' . mysqli_errno($this->connessione));
     
-    while($row = $result->fetch_assoc()){
-      array_push($employees, array("id"=>$row['id'], "birthDate"=>$row['birth_date'], "firstName"=>$row['first_name'], "lastName"=>$row['last_name'], "gender"=>$row['gender'], "hireDate"=>$row['hire_date'], 
-                  'links_' =>array( 'self'=>array('href'=>$this->index."?id=".$row['id']), 
-                              'employee'=>array('href'=>$this->index."?id=".$row['id']))
-                )); 
-    }*//*
     $table = array("data" => array());
     $query = "SELECT id, first_name, last_name, gender, hire_date, birth_date FROM employees {$where} ORDER BY {$ordercol} {$order} LIMIT {$start} , {$length}";
 
@@ -59,7 +27,7 @@ class MySQL
       or die('Query fallita ' . mysqli_error($this->connessione) . '' . mysqli_errno($this->connessione));
     while ($row = $result->fetch_assoc()) {
       array_push($table['data'], array(
-        "id" => $row['id'],
+        "DT_RowId" => $row['id'],
         "birthDate" => $row['birth_date'],
         "firstName" => $row['first_name'],
         "lastName" => $row['last_name'],
@@ -76,25 +44,45 @@ class MySQL
     }
 
     return $table;
-  }*/
+  }
 
 
-  function getID($id)
+  function getLast($table) //return per rendere possibile l'aggiornamento immediato dopo inserimento nuovo elemento
   {
-    $query = 'select * from employees where id=' . $id;
+    $query = "SELECT id, first_name, last_name, gender, hire_date, birth_date FROM employees order by 1 desc limit 1;";
+
     $result = $this->connessione->query($query)
       or die('Query fallita ' . mysqli_error($this->connessione) . '' . mysqli_errno($this->connessione));
-
     while ($row = $result->fetch_assoc()) {
-      $employee = array(
-        "id" => $row['id'], "birthDate" => $row['birth_date'], "firstName" => $row['first_name'], "lastName" => $row['last_name'], "gender" => $row['gender'], "hireDate" => $row['hire_date'],
-        'links_' => array(
-          'self' => array('href' => $this->index . "?id=" . $row['id']),
-          'employee' => array('href' => $this->index . "?id=" . $row['id'])
-        )
-      );
+      array_push($table['data'], array(
+        "DT_RowId" => $row['id'],
+        "birthDate" => $row['birth_date'],
+        "firstName" => $row['first_name'],
+        "lastName" => $row['last_name'],
+        "gender" => $row['gender'],
+        "hireDate" => $row['hire_date']
+      ));
     }
-    return $employee;
+    return $table;
+  }
+
+  function getID($table,$id)
+  {
+    $query = "SELECT id, first_name, last_name, gender, hire_date, birth_date FROM employees WHERE id={$id};";
+
+    $result = $this->connessione->query($query)
+      or die('Query fallita ' . mysqli_error($this->connessione) . '' . mysqli_errno($this->connessione));
+    while ($row = $result->fetch_assoc()) {
+      array_push($table['data'], array(
+        "DT_RowId" => $row['id'],
+        "birthDate" => $row['birth_date'],
+        "firstName" => $row['first_name'],
+        "lastName" => $row['last_name'],
+        "gender" => $row['gender'],
+        "hireDate" => $row['hire_date']
+      ));
+    }
+    return $table;
   }
 
   function count()
