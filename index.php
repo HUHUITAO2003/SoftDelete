@@ -26,7 +26,7 @@ switch ($method) {
     $data['gender'] = $_POST['data'][$data['id']]['gender'];
     $data['hireDate'] = $_POST['data'][$data['id']]['hireDate'];
     $data['birthDate'] = $_POST['data'][$data['id']]['birthDate'];
-    $data['removed_date'] = $_POST['data'][$data['id']]['users']['removed_date'];
+    $data['removed_date'] = $_POST['data'][$data['id']]['removed_date'];
     $data['action'] = $_POST['action'];
     }
 
@@ -37,7 +37,7 @@ switch ($method) {
         break;
 
       case 'edit':
-        if ($data['removed_date'] != "") {
+        if ($data['removed_date'] != "") { //se removed date esiste avviene il delete, se no put
           $sql->delete($data['id']);
         } else {
           $sql->put($data);
@@ -49,7 +49,6 @@ switch ($method) {
             $table['recordsTotal'] = $sql->count();
         ;
     }
-
     echo json_encode($table, JSON_UNESCAPED_SLASHES);
     break;
 

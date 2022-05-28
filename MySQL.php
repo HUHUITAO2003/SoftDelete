@@ -46,45 +46,6 @@ class MySQL
     return $table;
   }
 
-
-  function getLast($table) //return per rendere possibile l'aggiornamento immediato dopo inserimento nuovo elemento
-  {
-    $query = "SELECT id, first_name, last_name, gender, hire_date, birth_date FROM employees order by 1 desc limit 1;";
-
-    $result = $this->connessione->query($query)
-      or die('Query fallita ' . mysqli_error($this->connessione) . '' . mysqli_errno($this->connessione));
-    while ($row = $result->fetch_assoc()) {
-      array_push($table['data'], array(
-        "DT_RowId" => $row['id'],
-        "birthDate" => $row['birth_date'],
-        "firstName" => $row['first_name'],
-        "lastName" => $row['last_name'],
-        "gender" => $row['gender'],
-        "hireDate" => $row['hire_date']
-      ));
-    }
-    return $table;
-  }
-
-  function getID($table,$id)
-  {
-    $query = "SELECT id, first_name, last_name, gender, hire_date, birth_date FROM employees WHERE id={$id};";
-
-    $result = $this->connessione->query($query)
-      or die('Query fallita ' . mysqli_error($this->connessione) . '' . mysqli_errno($this->connessione));
-    while ($row = $result->fetch_assoc()) {
-      array_push($table['data'], array(
-        "DT_RowId" => $row['id'],
-        "birthDate" => $row['birth_date'],
-        "firstName" => $row['first_name'],
-        "lastName" => $row['last_name'],
-        "gender" => $row['gender'],
-        "hireDate" => $row['hire_date']
-      ));
-    }
-    return $table;
-  }
-
   function count()
   {
     $query = 'select count(id) as count from employees';

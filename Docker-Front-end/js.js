@@ -5,8 +5,7 @@ $(document).ready(function () {
     ajax: "../index.php",
     table: "#example",
     fields: [ //parametri form
-    {
-      label: "First name:",
+    { label: "First name:",
       name: "firstName"
     }, {
       label: "Last name:",
@@ -34,7 +33,7 @@ $(document).ready(function () {
       wireFormat: 'YYYY-MM-DD',
       keyInput: false
     }, {
-      name: "users.removed_date",
+      name: "removed_date",
       type: "hidden"
     }
     ]
@@ -58,11 +57,28 @@ $(document).ready(function () {
     ],
     select: true,
     buttons: [
-      { extend: "create", editor: editor },
-      { extend: "edit", editor: editor},
+      { extend: "create", text: 'Crea', editor: editor, 
+      action: function (e, dt, node, config) {
+        editor
+          .create({
+            title: 'Inserimento form',
+            buttons: 'Inserisci'
+          })
+        }
+    },
+      { extend: "edit", text: 'Modifica', editor: editor,
+      action: function (e, dt, node, config) {
+        var rows = table.rows({ selected: true }).indexes();
+        editor
+          .edit(rows, {
+            title: 'Modifica riga',
+            buttons: 'Modifica'
+          })
+      }
+    },
       {
         extend: "selected",
-        text: 'Delete',
+        text: 'Elimina',
         action: function (e, dt, node, config) {
           var rows = table.rows({ selected: true }).indexes();
 
@@ -74,13 +90,13 @@ $(document).ready(function () {
               }, 500);
             })
             .edit(rows, {
-              title: 'Delete',
+              title: 'Eliminazione',
               message: rows.length === 1 ?
-                'Are you sure you wish to delete this row?' :
-                'Are you sure you wish to delete these ' + rows.length + ' rows',
-              buttons: 'Delete'
+                'Sei sicuro di voler eliminare questa riga?' :
+                'Sei sicuro di voler eliminare queste' + rows.length + ' righe?',
+              buttons: 'Elimina'
             })
-            .val('users.removed_date', (new Date()).toISOString().split('T')[0]);
+            .val('removed_date', (new Date()).toISOString().split('T')[0]);
         }
       }
     ]
